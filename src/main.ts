@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 
-import { initalizeTracing } from './tracing';
 import { AppModule } from './app.module';
+import { initalizeTracing } from './otel';
 
 async function bootstrap() {
   // Start SDK before nestjs factory create

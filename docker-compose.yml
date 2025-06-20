@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - '16686:16686' # Jaeger UI
+      - '5778:5778' # Configurations for clients
+      - '14268:14268' # HTTP for sending spans directly to collector
+      - '14250:14250' # gRPC for sending spans
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    container_name: otel-collector
+    command: ['--config=/etc/otel-collector-config.yml']
+    volumes:
+      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+    ports:
+      - '1888:1888' # pprof extension
+      - '13133:13133' # health_check extension
+      - '4317:4317' # OTLP gRPC receiver
+      - '4318:4318' # http gRPC receiver
+      - '55679:55679' # zpages extension
+    depends_on:
+      - jaeger
+    links:
+      - jaeger
